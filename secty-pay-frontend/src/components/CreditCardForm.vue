@@ -68,12 +68,17 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'creditCardForm',
   data() {
     return {
       dialog: false,
     };
+  },
+  computed: {
+    ...mapGetters(['isAuthenticated', 'currentUser']),
   },
   methods: {
     purchase() {

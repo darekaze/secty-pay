@@ -15,7 +15,8 @@
           </v-card-title>
 
           <v-card-actions>
-            <credit-card-form/>
+            <credit-card-form v-if="isAuthenticated"/>
+            <v-btn v-else flat>Login To Purchase</v-btn>
           </v-card-actions>
         </v-card>
     </v-flex>
@@ -23,10 +24,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'sampleItemForSale',
   components: {
     CreditCardForm: () => import('@/components/CreditCardForm.vue'),
+  },
+  computed: {
+    ...mapGetters(['isAuthenticated']),
   },
 };
 </script>
