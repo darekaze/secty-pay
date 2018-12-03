@@ -10,7 +10,7 @@ function jwtSignUser(user) {
 }
 
 function responseToFailure(res) {
-  res.status(403).send({
+  res.status(400).send({
     error: 'Incorrect username or password!',
   });
 }

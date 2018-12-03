@@ -3,11 +3,11 @@ const Joi = require('joi');
 module.exports = {
   required(req, res, next) {
     if (!req.body.recaptcha) {
-      res.status(403).send({
+      res.status(400).send({
         error: 'Please enter the reCAPTCHA!',
       });
     } else if (!req.body.credential) {
-      res.status(403).send({
+      res.status(400).send({
         error: 'Credential cannot be empty!',
       });
     } else next();
