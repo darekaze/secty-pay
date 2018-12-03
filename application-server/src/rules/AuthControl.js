@@ -19,31 +19,18 @@ module.exports = {
       password: Joi.string().regex(/^[a-zA-Z0-9]{8,32}$/),
     });
 
+    const errorMapping = {
+      fullname: 'Name must be characters only',
+      username: 'Username can only contain numbers and letters',
+      password: 'Password must be at least 8 characters long and not exceeding 32 characters',
+    };
+
     const { error } = Joi.validate(req.body.credential, schema);
 
     if (error) {
-      switch (error.details[0].context.key) {
-        case 'fullname':
-          res.status(400).send({
-            error: 'Name must be characters only',
-          });
-          break;
-        case 'username':
-          res.status(400).send({
-            error: 'Username can only contain numbers and letters',
-          });
-          break;
-        case 'password':
-          res.status(400).send({
-            error: 'Password must be at least 8 characters long and not exceeding 32 characters',
-          });
-          break;
-        default:
-          res.status(400).send({
-            error: 'Invalid registration information',
-          });
-          break;
-      }
+      res.status(400).send({
+        error: errorMapping[error.details[0].context.key] || 'Invalid registration information',
+      });
     } else next();
   },
 };
