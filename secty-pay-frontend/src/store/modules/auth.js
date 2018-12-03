@@ -38,7 +38,7 @@ const actions = {
     commit(PURGE_AUTH);
   },
   [REGISTER]({ commit }, { credential, recaptcha }) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       AuthService.register(credential, recaptcha)
         .then(({ data }) => {
           commit(SET_AUTH, data);
@@ -46,7 +46,6 @@ const actions = {
         })
         .catch(({ response }) => {
           commit(SET_ERROR, response.data.error);
-          reject(response);
         });
     });
   },

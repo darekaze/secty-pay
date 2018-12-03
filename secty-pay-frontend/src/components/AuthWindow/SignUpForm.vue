@@ -64,7 +64,7 @@ import { mapState } from 'vuex';
 import { REGISTER } from '@/store/types/actions';
 
 export default {
-  name: 'RegisterForm',
+  name: 'SignupForm',
   components: {
     VueRecaptcha: () => import('vue-recaptcha'),
   },

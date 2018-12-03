@@ -10,26 +10,25 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 import VHeader from '@/components/VHeader.vue';
-// import { AUTH_LOGOUT } from '@/store/actions/auth';
+import { LOGOUT } from '@/store/types/actions';
 
 export default {
   name: 'App',
   components: {
     VHeader,
   },
-  // created() {
-  //   axios.interceptors.response.use(undefined, (err) => {
-  //     return new Promise((resolve, reject) => {
-  //       if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
-  //         this.$store.dispatch(AUTH_LOGOUT)
-  //         this.$router.push('/');
-  //       }
-  //       throw err;
-  //     });
-  //   });
-  // },
+  created() {
+    axios.interceptors.response.use(undefined, (error) => {
+      // Handle expired user token
+      if (error.response.status === 401) {
+        this.$store.dispatch(LOGOUT);
+        this.$router.push('/');
+      }
+      return error;
+    });
+  },
 };
 </script>
 
