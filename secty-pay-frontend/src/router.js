@@ -5,8 +5,12 @@ import store from './store';
 
 Vue.use(Router);
 
-const ifAuthenticated = (to, from, next) => {
-  next(store.getters.isAuthenticated ? null : '/');
+const requireAuth = (to, from, next) => {
+  if (store.getters.isAuthenticated) {
+    next();
+    return;
+  }
+  next('/');
 };
 
 export default new Router({
@@ -25,7 +29,7 @@ export default new Router({
       path: '/history',
       name: 'history',
       component: () => import(/* webpackChunkName: "history" */ './views/History.vue'),
-      beforeEnter: ifAuthenticated,
+      beforeEnter: requireAuth,
     },
   ],
 });
