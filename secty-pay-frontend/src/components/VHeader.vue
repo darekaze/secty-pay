@@ -5,16 +5,28 @@
     <span class="font-weight-light">Pay</span>
   </v-toolbar-title>
   <v-spacer></v-spacer>
-
-  <v-toolbar-items>
-    <v-btn
-      v-if="isAuthenticated"
-      @click="logout"
-      color="teal lighten-1"
-      flat>
-      Log Out
-    </v-btn>
-    <auth-pop-up v-else/>
+  <v-toolbar-items v-if="isAuthenticated">
+    <div class="d-flex align-center">
+      <v-tooltip bottom allow-overflow>
+        <v-btn
+          slot="activator"
+          to="/history"
+          color="teal lighten-1"
+          flat icon dark>
+          <v-icon>history</v-icon>
+        </v-btn>
+        <span>Purchase History</span>
+      </v-tooltip>
+      <v-btn
+        @click="logout"
+        color="teal lighten-1"
+        round flat dark>
+        <span class="my-2">Log Out</span>
+      </v-btn>
+    </div>
+  </v-toolbar-items>
+  <v-toolbar-items v-else>
+    <auth-dialog/>
   </v-toolbar-items>
 </v-toolbar>
 </template>
@@ -26,7 +38,7 @@ import { LOGOUT } from '@/store/types/actions';
 export default {
   name: 'VHeader',
   components: {
-    AuthPopUp: () => import('@/components/AuthWindow/AuthDialog.vue'),
+    AuthDialog: () => import('@/components/AuthWindow/AuthDialog.vue'),
   },
   computed: {
     ...mapGetters(['isAuthenticated']),

@@ -1,13 +1,11 @@
 <template>
-  <HelloWorld />
+  <sample-item />
 </template>
 
 <script>
-import HelloWorld from '../components/HelloWorld.vue';
-
 export default {
   components: {
-    HelloWorld,
+    SampleItem: () => import('@/components/SampleItem.vue'),
   },
 };
 </script>
