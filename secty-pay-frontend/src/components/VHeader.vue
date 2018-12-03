@@ -8,7 +8,7 @@
 
   <v-toolbar-items>
     <v-btn
-      v-if="isUserLoggedIn"
+      v-if="isAuthenticated"
       @click="logout"
       color="teal lighten-1"
       flat>
@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
+import { LOGOUT } from '@/store/types/actions';
 
 export default {
   name: 'VHeader',
@@ -28,14 +29,14 @@ export default {
     AuthPopUp: () => import('@/components/AuthWindow/AuthDialog.vue'),
   },
   computed: {
-    ...mapState({
-      isUserLoggedIn: state => state.auth.isUserLoggedIn,
-    }),
+    ...mapGetters(['isAuthenticated']),
   },
   methods: {
     logout() {
-      this.$store.dispatch('setToken', null);
-      this.$store.dispatch('setUser', null);
+      this.$store.dispatch(LOGOUT)
+        .then(() => {
+          this.$router.push('/');
+        });
     },
   },
 };

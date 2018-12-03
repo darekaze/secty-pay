@@ -52,9 +52,14 @@
 </template>
 
 <script>
-import AuthService from '@/api/app/Auth';
+import { mapState } from 'vuex';
+import { LOGIN } from '@/store/types/actions';
 
 export default {
+  name: 'LoginForm',
+  components: {
+    VueRecaptcha: () => import('vue-recaptcha'),
+  },
   data() {
     return {
       username: '',
@@ -66,40 +71,43 @@ export default {
         v => !!v || 'Password is required',
         v => (v && v.length >= 8) || 'Password must be more than 8 characters',
       ],
-      error: null,
       valid: false,
       recaptchaResponse: null,
       sitekey: '6Lf4G2gUAAAAANVI2ndLFcJUrzGm7qXUGndJbT4r',
     };
   },
-  components: {
-    VueRecaptcha: () => import('vue-recaptcha'),
-  },
   mounted() {
     this.valid = false;
   },
+  computed: {
+    ...mapState({
+      error: state => state.auth.error,
+    }),
+  },
   methods: {
-    async login() {
-      try {
-        const response = await AuthService.login({
+    login() {
+      const payload = {
+        credential: {
           username: this.username,
           password: this.password,
-        }, this.recaptchaResponse);
-        this.$store.dispatch('setToken', response.data.token);
-        this.$store.dispatch('setUser', response.data.user);
-        this.$emit('done');
-        this.$refs.form.reset();
-      } catch (error) {
-        this.error = error.response.data.error;
-      } finally {
-        this.recaptchaResponse = null;
-        this.$refs.recaptcha.reset();
-      }
+        },
+        recaptcha: this.recaptchaResponse,
+      };
+
+      this.recaptchaResponse = null;
+      this.$refs.recaptcha.reset();
+
+      this.$store.dispatch(LOGIN, payload)
+        .then(() => {
+          this.$refs.form.reset();
+          this.$emit('done');
+        });
     },
     onVerify(response) {
       this.recaptchaResponse = response;
     },
   },
+
 };
 </script>
 
