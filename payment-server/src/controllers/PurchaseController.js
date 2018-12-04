@@ -1,20 +1,26 @@
 /* eslint-disable no-unused-expressions */
+const jwt = require('jsonwebtoken');
 const openpgp = require('openpgp');
+const config = require('../config');
 
 const bob = {};
+
+function jwtSignInfo(info) {
+  const ONE_WEEK = 60 * 60 * 24 * 7;
+  return jwt.sign(info, config.authentication.jwtSecret, {
+    expiresIn: ONE_WEEK, // expired in 10s
+  });
+}
+
 module.exports = {
   async purchase(req, res) {
     try {
-      // captcha
       if (req.body.info.pubkey === 't') {
-        const { pubkey } = req.body.info;
-        const passphrase = 'bob-passphrase';
         const keyOptions = {
-          userIds: [{ seed: 51696808 }],
+          userIds: [{ seed: 51696808 }], // Make random in config
           numBits: 512,
           passphrase: 'bob-passphrase',
         };
-
 
         openpgp.generateKey(keyOptions).then((key) => {
           bob.privateKey = key.privateKeyArmored;
@@ -23,6 +29,7 @@ module.exports = {
           res.send(bob.publicKey);
         });
       }
+
       if (req.body.info.message) {
         const ciphertext = req.body.info.message;
         const privateKey = (await openpgp.key.readArmored(bob.privateKey)).keys[0];
@@ -32,9 +39,11 @@ module.exports = {
           publicKeys: (await openpgp.key.readArmored(bob.publicKey)).keys,
           message: (await openpgp.message.readArmored(ciphertext)), // parse armored message
         };
-        // res.send(JSON.stringify(options));
-        openpgp.decrypt(options).then((plaintext) => {
-          res.send(plaintext.data);
+
+        openpgp.decrypt(options).then(({ data }) => {
+          res.send({
+            clientToken: jwtSignInfo(JSON.parse(data)),
+          });
         });
       }
     } catch (error) {

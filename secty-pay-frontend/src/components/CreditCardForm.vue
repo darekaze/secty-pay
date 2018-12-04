@@ -64,6 +64,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import AuthService from '@/api/app/Auth';
+
 const openpgp = require('openpgp');
 
 export default {
@@ -72,7 +73,7 @@ export default {
     return {
       cardnumber: '',
       expiry: '',
-      cvc:'',
+      cvc: '',
       pubkey: '',
       token: '',
       error: null,
@@ -90,14 +91,12 @@ export default {
         const response1 = await AuthService.purchase({
           pubkey: 't',
         });
-        
-        alert(response1.data);
-        if(response1){
+        if (response1) {
           const creditcard = {
             cardnumber: this.cardnumber,
             expiry: this.expiry,
             cvc: this.cvc,
-          }
+          };
           const options = {
             message: openpgp.message.fromText(JSON.stringify(creditcard)),
             publicKeys: (await openpgp.key.readArmored(response1.data)).keys,
@@ -107,12 +106,11 @@ export default {
             const response2 = await AuthService.purchase({
               message: cipherText.data,
             });
-            alert(JSON.stringify(response2.data));
+            alert(JSON.stringify(response2.data)); // FIXME: should return jwt
           });
-          
         }
       } catch (error) {
-        
+        console.log('Error has occur');
       }
     },
   },
