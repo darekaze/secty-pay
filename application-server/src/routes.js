@@ -13,7 +13,10 @@ module.exports = (app) => {
     AuthControl.required,
     AuthController.login);
 
+  app.get('/payment',
+    isAuthenticated,
+    PaymentController.getMerchantToken);
   app.post('/payment',
     isAuthenticated,
-    PaymentController.authorize);
+    PaymentController.requestAuthorize);
 };

@@ -7,31 +7,30 @@ const bob = {};
 
 function jwtSignInfo(info) {
   return jwt.sign(info, config.authentication.jwtSecret, {
+    algorithm: 'HS512',
     expiresIn: 10000, // expired in 10s
   });
 }
 
 module.exports = {
   getPubKey(req, res) {
-    const keyOptions = {
-      userIds: [{ seed: 51696808 }], // Make random in config
-      numBits: 512,
-      passphrase: 'bob-passphrase',
-    };
-
-    openpgp.generateKey(keyOptions).then((key) => {
-      bob.privateKey = key.privateKeyArmored;
-      bob.publicKey = key.publicKeyArmored;
-    }).then(() => {
+    if (Object.keys(bob).length === 0) { // if no pub-pri key pair
+      openpgp.generateKey(config.keyOptions).then((key) => {
+        bob.privateKey = key.privateKeyArmored;
+        bob.publicKey = key.publicKeyArmored;
+      }).then(() => {
+        res.send(bob.publicKey);
+      });
+    } else {
       res.send(bob.publicKey);
-    });
+    }
   },
-  async purchase(req, res) {
+  async authorize(req, res) {
     try {
       const ciphertext = req.body.info.message;
       const privateKey = (await openpgp.key.readArmored(bob.privateKey)).keys[0];
 
-      privateKey.decrypt('bob-passphrase');
+      privateKey.decrypt(config.keyOptions.passphrase);
 
       const options = {
         privateKeys: [privateKey],
@@ -40,20 +39,38 @@ module.exports = {
       };
 
       openpgp.decrypt(options).then(({ data }) => {
-        res.send({
-          clientToken: jwtSignInfo(JSON.parse(data)),
+        console.log(data);
+        // TODO: Validate credit card data with mock database
+        res.send({ // If success
+          AuthorizationToken: jwtSignInfo(JSON.parse(data)),
         });
       });
     } catch (error) {
-      res.status(403).send({
-        error: 'Something wrong happened..',
+      res.status(400).send({
+        error: 'Connection Interrupted!',
       });
     }
   },
-  async charging(req, res) {
+  charging(req, res) {
     try {
-      // payment logic here (verify is done in middleware)
-      console.log(req.body);
+      const [_, token] = (req.headers.authorization).split(' ');
+      jwt.verify(token, config.authentication.jwtSecret, (err, data) => {
+        if (err) {
+          res.sendStatus(403); // forbidden
+        } else {
+          console.log(data);
+          jwt.verify(data.merchantIdentity, req.body.pk, (err2, merchant) => {
+            if (err2) {
+              res.sendStatus(403);
+            } else {
+              console.log(merchant);
+            }
+          });
+        }
+      });
+
+      // console.log(token);
+      // console.log(req.body.pk);
       res.send({ success: true });
     } catch (err) {
       res.status(400).send({

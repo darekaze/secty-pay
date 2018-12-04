@@ -1,7 +1,10 @@
 import AppApi from '.';
 
 export default {
-  pay(clientToken) {
-    return AppApi().post('payment', { clientToken });
+  get() {
+    return AppApi().get('payment');
+  },
+  pay(AuthorizationToken) {
+    return AppApi().post('payment', { AuthorizationToken });
   },
 };

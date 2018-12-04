@@ -75,8 +75,7 @@ export default {
       cardnumber: '',
       expiry: '',
       cvc: '',
-      pubkey: '',
-      token: '',
+      price: 199,
       error: null,
       dialog: false,
     };
@@ -87,29 +86,32 @@ export default {
   methods: {
     async purchase() {
       try {
+        const { merchantToken } = (await PaymentService.get()).data;
         const pubKey = (await AuthorizeService.getPubKey()).data;
-        const creditcard = {
-          cardnumber: this.cardnumber,
-          expiry: this.expiry,
-          cvc: this.cvc,
+        const paymentInfo = {
+          creditCard: {
+            cardnumber: this.cardnumber,
+            expiry: this.expiry,
+            cvc: this.cvc,
+          },
+          amount: this.price,
+          merchantIdentity: merchantToken,
         };
         const options = {
-          message: openpgp.message.fromText(JSON.stringify(creditcard)),
+          message: openpgp.message.fromText(JSON.stringify(paymentInfo)),
           publicKeys: (await openpgp.key.readArmored(pubKey)).keys,
         };
 
         openpgp.encrypt(options).then(async (cipherText) => {
-          const { clientToken } = (await AuthorizeService.getAuthorizeToken({
+          const { AuthorizationToken } = (await AuthorizeService.getAuthorizeToken({
             message: cipherText.data,
           })).data;
 
-          alert(clientToken);
-
-          const result = (await PaymentService.pay(clientToken)).data;
+          const result = (await PaymentService.pay(AuthorizationToken)).data;
           alert(result.success);
         });
       } catch (error) {
-        console.log('Error has occur');
+        console.log('Error has occur'); // eslint-disable-line no-console
       }
     },
   },
