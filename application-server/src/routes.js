@@ -1,4 +1,5 @@
 const AuthController = require('./controllers/AuthController');
+const PaymentController = require('./controllers/PaymentController');
 
 const AuthControl = require('./rules/AuthControl');
 const isAuthenticated = require('./rules/isAuth');
@@ -11,4 +12,8 @@ module.exports = (app) => {
   app.post('/login',
     AuthControl.required,
     AuthController.login);
+
+  app.post('/payment',
+    isAuthenticated,
+    PaymentController.authorize);
 };
