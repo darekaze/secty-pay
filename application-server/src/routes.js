@@ -14,6 +14,6 @@ module.exports = (app) => {
     AuthController.login);
 
   app.post('/payment',
-    // isAuthenticated,
+    isAuthenticated,
     PaymentController.authorize);
 };
