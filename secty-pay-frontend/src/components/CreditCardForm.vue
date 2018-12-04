@@ -12,6 +12,7 @@
         <span class="headline">Payment</span>
       </v-card-title>
       <v-card-text>
+        <div class="error" v-html="error" />
         <v-container grid-list-md>
           <v-layout wrap>
             <v-flex xs12>
@@ -37,20 +38,13 @@
             </v-flex>
             <v-flex xs12 sm6 md4>
               <v-text-field
+                type="password"
                 class="mx-2"
                 mask="###"
                 label="CVC"
                 v-model="cvc"
                 hint="3 digits at the back of the card"
                 append-icon="security"
-                required>
-              </v-text-field>
-            </v-flex>
-            <v-flex xs12 sm6 md4>
-              <v-text-field
-                class="mx-2"
-                label="ZIP"
-                append-icon="markunread_mailbox"
                 required>
               </v-text-field>
             </v-flex>
@@ -69,11 +63,19 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import AuthService from '@/api/app/Auth';
+const openpgp = require('openpgp');
 
 export default {
   name: 'creditCardForm',
   data() {
     return {
+      cardnumber: '',
+      expiry: '',
+      cvc:'',
+      pubkey: '',
+      token: '',
+      error: null,
       dialog: false,
     };
   },
@@ -81,9 +83,37 @@ export default {
     ...mapGetters(['isAuthenticated', 'currentUser']),
   },
   methods: {
-    purchase() {
+    async purchase() {
       // payment logic here
       // TODO: Use crypto
+      try {
+        const response1 = await AuthService.purchase({
+          pubkey: 't',
+        });
+        
+        alert(response1.data);
+        if(response1){
+          const creditcard = {
+            cardnumber: this.cardnumber,
+            expiry: this.expiry,
+            cvc: this.cvc,
+          }
+          const options = {
+            message: openpgp.message.fromText(JSON.stringify(creditcard)),
+            publicKeys: (await openpgp.key.readArmored(response1.data)).keys,
+          };
+          console.log(JSON.stringify(options));
+          openpgp.encrypt(options).then(async (cipherText) => {
+            const response2 = await AuthService.purchase({
+              message: cipherText.data,
+            });
+            alert(JSON.stringify(response2.data));
+          });
+          
+        }
+      } catch (error) {
+        
+      }
     },
   },
 };
