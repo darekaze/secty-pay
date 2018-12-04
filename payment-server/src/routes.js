@@ -8,7 +8,10 @@ const index = (req, res) => {
   res.send({ home: true });
 };
 
+const PurchaseController = require('./controllers/PurchaseController');
+
 module.exports = (app) => {
   app.get('/', index);
   app.get('/test', testConnect);
+  app.post('/purchase', PurchaseController.purchase);
 };
