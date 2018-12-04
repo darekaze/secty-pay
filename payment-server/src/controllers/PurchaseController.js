@@ -7,26 +7,25 @@ const bob = {};
 
 function jwtSignInfo(info) {
   return jwt.sign(info, config.authentication.jwtSecret, {
+    algorithm: 'HS512',
     expiresIn: 10000, // expired in 10s
   });
 }
 
 module.exports = {
   getPubKey(req, res) {
-    const keyOptions = {
-      userIds: [{ seed: 51696808 }], // Make random in config
-      numBits: 512,
-      passphrase: 'bob-passphrase',
-    };
-
-    openpgp.generateKey(keyOptions).then((key) => {
-      bob.privateKey = key.privateKeyArmored;
-      bob.publicKey = key.publicKeyArmored;
-    }).then(() => {
+    if (Object.keys(bob).length === 0) { // if no pub-pri key pair
+      openpgp.generateKey(config.keyOptions).then((key) => {
+        bob.privateKey = key.privateKeyArmored;
+        bob.publicKey = key.publicKeyArmored;
+      }).then(() => {
+        res.send(bob.publicKey);
+      });
+    } else {
       res.send(bob.publicKey);
-    });
+    }
   },
-  async purchase(req, res) {
+  async authorize(req, res) {
     try {
       const ciphertext = req.body.info.message;
       const privateKey = (await openpgp.key.readArmored(bob.privateKey)).keys[0];
@@ -45,8 +44,8 @@ module.exports = {
         });
       });
     } catch (error) {
-      res.status(403).send({
-        error: 'Something wrong happened..',
+      res.status(400).send({
+        error: 'Credit card information invalid',
       });
     }
   },

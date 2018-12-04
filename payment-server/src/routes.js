@@ -12,7 +12,7 @@ module.exports = (app) => {
   app.get('/purchase',
     PurchaseController.getPubKey);
   app.post('/purchase',
-    PurchaseController.purchase);
+    PurchaseController.authorize);
   app.post('/charging',
     // tokenVerification,
     PurchaseController.charging);

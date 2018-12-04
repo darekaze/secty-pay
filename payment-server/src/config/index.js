@@ -1,5 +1,7 @@
 const path = require('path');
 
+const seed = Math.floor(Math.random() * Math.floor(100000));
+
 module.exports = {
   port: process.env.PORT || 8095,
   db: {
@@ -15,5 +17,10 @@ module.exports = {
   },
   authentication: {
     jwtSecret: process.env.JWT_SECRET || 'secPay_secret',
+  },
+  keyOptions: {
+    userIds: [{ seed }],
+    numBits: 512,
+    passphrase: process.env.PASSPHRASE || 'bob-passphrase',
   },
 };
