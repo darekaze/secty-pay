@@ -1,4 +1,4 @@
-import AuthService from '../../api/app/Auth';
+import AuthenticateService from '../../api/app/Authenticate';
 import {
   LOGIN, LOGOUT, REGISTER,
 } from '../types/actions';
@@ -24,7 +24,7 @@ const getters = {
 const actions = {
   [LOGIN]({ commit }, { credential, recaptcha }) {
     return new Promise((resolve) => {
-      AuthService.login(credential, recaptcha)
+      AuthenticateService.login(credential, recaptcha)
         .then(({ data }) => {
           commit(SET_AUTH, data);
           resolve(data);
@@ -39,7 +39,7 @@ const actions = {
   },
   [REGISTER]({ commit }, { credential, recaptcha }) {
     return new Promise((resolve) => {
-      AuthService.register(credential, recaptcha)
+      AuthenticateService.register(credential, recaptcha)
         .then(({ data }) => {
           commit(SET_AUTH, data);
           resolve(data);

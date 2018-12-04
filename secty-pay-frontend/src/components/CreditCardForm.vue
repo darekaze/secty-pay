@@ -63,7 +63,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import PaymentService from '@/api/payment/Payment';
+import PaymentService from '@/api/app/Payment';
+import AuthorizeService from '@/api/payment/Authorize';
 
 const openpgp = require('openpgp');
 
@@ -86,7 +87,7 @@ export default {
   methods: {
     async purchase() {
       try {
-        const pubKey = (await PaymentService.getPubKey()).data;
+        const pubKey = (await AuthorizeService.getPubKey()).data;
         const creditcard = {
           cardnumber: this.cardnumber,
           expiry: this.expiry,
@@ -98,10 +99,14 @@ export default {
         };
 
         openpgp.encrypt(options).then(async (cipherText) => {
-          const { clientToken } = (await PaymentService.purchase({
+          const { clientToken } = (await AuthorizeService.getAuthorizeToken({
             message: cipherText.data,
           })).data;
+
           alert(clientToken);
+
+          const result = (await PaymentService.pay(clientToken)).data;
+          alert(result.success);
         });
       } catch (error) {
         console.log('Error has occur');
