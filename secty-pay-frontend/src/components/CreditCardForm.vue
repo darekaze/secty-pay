@@ -63,7 +63,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import AuthService from '@/api/app/Auth';
+import PaymentService from '@/api/payment/Payment';
 
 const openpgp = require('openpgp');
 
@@ -85,30 +85,24 @@ export default {
   },
   methods: {
     async purchase() {
-      // payment logic here
-      // TODO: Use crypto
       try {
-        const response1 = await AuthService.purchase({
-          pubkey: 't',
+        const pubKey = (await PaymentService.getPubKey()).data;
+        const creditcard = {
+          cardnumber: this.cardnumber,
+          expiry: this.expiry,
+          cvc: this.cvc,
+        };
+        const options = {
+          message: openpgp.message.fromText(JSON.stringify(creditcard)),
+          publicKeys: (await openpgp.key.readArmored(pubKey)).keys,
+        };
+
+        openpgp.encrypt(options).then(async (cipherText) => {
+          const { clientToken } = (await PaymentService.purchase({
+            message: cipherText.data,
+          })).data;
+          alert(clientToken);
         });
-        if (response1) {
-          const creditcard = {
-            cardnumber: this.cardnumber,
-            expiry: this.expiry,
-            cvc: this.cvc,
-          };
-          const options = {
-            message: openpgp.message.fromText(JSON.stringify(creditcard)),
-            publicKeys: (await openpgp.key.readArmored(response1.data)).keys,
-          };
-          console.log(JSON.stringify(options));
-          openpgp.encrypt(options).then(async (cipherText) => {
-            const response2 = await AuthService.purchase({
-              message: cipherText.data,
-            });
-            alert(JSON.stringify(response2.data)); // FIXME: should return jwt
-          });
-        }
       } catch (error) {
         console.log('Error has occur');
       }

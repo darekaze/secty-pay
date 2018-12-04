@@ -7,8 +7,10 @@ const testConnect = (req, res) => {
 };
 
 module.exports = (app) => {
-  app.get('/test', testConnect);
+  app.get('/', testConnect);
 
+  app.get('/purchase',
+    PurchaseController.getPubKey);
   app.post('/purchase',
     PurchaseController.purchase);
   app.post('/charging',

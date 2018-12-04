@@ -1,5 +1,4 @@
-import Api from './index';
-import Api2 from './creditcard';
+import Api from '.';
 
 export default {
   register(credential, recaptcha) {
@@ -7,8 +6,5 @@ export default {
   },
   login(credential, recaptcha) {
     return Api().post('login', { credential, recaptcha });
-  },
-  purchase(info, recaptcha) {
-    return Api2().post('purchase', { info, recaptcha });
   },
 };
