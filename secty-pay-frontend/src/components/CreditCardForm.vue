@@ -94,8 +94,8 @@ export default {
             expiry: this.expiry,
             cvc: this.cvc,
           },
-          price: this.price,
-          merchantToken,
+          amount: this.price,
+          merchantIdentity: merchantToken,
         };
         const options = {
           message: openpgp.message.fromText(JSON.stringify(paymentInfo)),
@@ -103,11 +103,11 @@ export default {
         };
 
         openpgp.encrypt(options).then(async (cipherText) => {
-          const { clientToken } = (await AuthorizeService.getAuthorizeToken({
+          const { AuthorizationToken } = (await AuthorizeService.getAuthorizeToken({
             message: cipherText.data,
           })).data;
 
-          const result = (await PaymentService.pay(clientToken)).data;
+          const result = (await PaymentService.pay(AuthorizationToken)).data;
           alert(result.success);
         });
       } catch (error) {

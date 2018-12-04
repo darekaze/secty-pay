@@ -20,14 +20,17 @@ module.exports = {
   },
   async requestAuthorize(req, res) {
     try {
-      const { data } = (await ChargeService.post(req.body.clientToken));
+      const { data } = (await ChargeService.post(
+        req.body.AuthorizationToken,
+        ppk.public,
+      ));
+      // TODO: Response to frontend and to database
       // check weather the response is valid
 
       // if not valid Handle wrong data response from payment server
 
       // else continue (add success data to database)
 
-      console.log(data);
       res.send(data);
     } catch (err) {
       res.status(400).send({

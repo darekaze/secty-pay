@@ -1,5 +1,4 @@
 const PurchaseController = require('./controllers/PurchaseController');
-const tokenVerification = require('./policies/tokenVerification');
 
 const testConnect = (req, res) => {
   console.log('Testing api');
@@ -14,6 +13,5 @@ module.exports = (app) => {
   app.post('/purchase',
     PurchaseController.authorize);
   app.post('/charging',
-    // tokenVerification,
     PurchaseController.charging);
 };

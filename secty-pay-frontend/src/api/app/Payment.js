@@ -4,7 +4,7 @@ export default {
   get() {
     return AppApi().get('payment');
   },
-  pay(clientToken) {
-    return AppApi().post('payment', { clientToken });
+  pay(AuthorizationToken) {
+    return AppApi().post('payment', { AuthorizationToken });
   },
 };
