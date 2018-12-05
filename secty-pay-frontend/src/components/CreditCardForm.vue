@@ -101,17 +101,19 @@ export default {
           message: openpgp.message.fromText(JSON.stringify(paymentInfo)),
           publicKeys: (await openpgp.key.readArmored(pubKey)).keys,
         };
-
+        
         openpgp.encrypt(options).then(async (cipherText) => {
           const { AuthorizationToken } = (await AuthorizeService.getAuthorizeToken({
             message: cipherText.data,
+          }).catch((error) =>{
+            alert('Invalid credit card information');
           })).data;
-
+          
           const result = (await PaymentService.pay(AuthorizationToken)).data;
-          alert(result.success);
+          alert(JSON.stringify(result));
         });
       } catch (error) {
-        console.log('Error has occur'); // eslint-disable-line no-console
+        console.log('Error has occur');
       }
     },
   },

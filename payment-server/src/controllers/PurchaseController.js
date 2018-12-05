@@ -39,11 +39,17 @@ module.exports = {
       };
 
       openpgp.decrypt(options).then(({ data }) => {
-        console.log(data);
         // TODO: Validate credit card data with mock database
-        res.send({ // If success
-          AuthorizationToken: jwtSignInfo(JSON.parse(data)),
-        });
+        if (JSON.parse(data).creditCard.cardnumber !== '1111111111111111' || JSON.parse(data).creditCard.expiry !== '1111'
+        || JSON.parse(data).creditCard.cvc !== '111') {
+          res.status(401).send({ // If fail
+            error: 'Invalid credit card information',
+          });
+        } else {
+          res.send({ // If success
+            AuthorizationToken: jwtSignInfo(JSON.parse(data)),
+          });
+        }
       });
     } catch (error) {
       res.status(400).send({
