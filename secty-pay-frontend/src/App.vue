@@ -10,8 +10,8 @@
 </template>
 
 <script>
-// import axios from 'axios';
-// import { LOGOUT } from '@/store/types/actions';
+import axios from 'axios';
+import { LOGOUT } from '@/store/types/actions';
 import VHeader from '@/components/VHeader.vue';
 
 export default {
@@ -19,16 +19,16 @@ export default {
   components: {
     VHeader,
   },
-  // created() {
-  //   axios.interceptors.response.use(undefined, (error) => {
-  //     // Handle expired user token
-  //     if (error.response.status === 401) {
-  //       this.$store.dispatch(LOGOUT);
-  //       this.$router.push('/');
-  //     }
-  //     return error;
-  //   });
-  // },
+  created() {
+    axios.interceptors.response.use(undefined, (error) => {
+      // Handle expired user token
+      if (error.response.status === 401) {
+        this.$store.dispatch(LOGOUT);
+        this.$router.push('/');
+      }
+      return error;
+    });
+  },
 };
 </script>
 

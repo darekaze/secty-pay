@@ -31,5 +31,9 @@ export default new Router({
       component: () => import(/* webpackChunkName: "purchase" */ './views/History.vue'),
       beforeEnter: requireAuth,
     },
+    {
+      path: '*',
+      redirect: '/',
+    },
   ],
 });
