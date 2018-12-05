@@ -6,12 +6,13 @@ const config = require('../config');
 const bob = {};
 
 // Mock credit card database
-const creditcardMock = {
+const creditCardMock = {
   cardnumber: '1111111111111111',
   expiry: '1111',
   cvc: '111',
 };
 
+// Mock Merchant database
 const merchantMock = {
   id: 11123,
   name: 'TheMerchant',
@@ -39,7 +40,7 @@ module.exports = {
   },
   async authorize(req, res) {
     try {
-      const ciphertext = req.body.info.message;
+      const cipherText = req.body.info.message;
       const privateKey = (await openpgp.key.readArmored(bob.privateKey)).keys[0];
 
       privateKey.decrypt(config.keyOptions.passphrase);
@@ -47,14 +48,14 @@ module.exports = {
       const options = {
         privateKeys: [privateKey],
         publicKeys: (await openpgp.key.readArmored(bob.publicKey)).keys,
-        message: (await openpgp.message.readArmored(ciphertext)), // parse armored message
+        message: (await openpgp.message.readArmored(cipherText)), // parse armored message
       };
 
       openpgp.decrypt(options).then(({ data }) => {
         // TODO: Validate credit card data with mock database
-        if (JSON.parse(data).creditCard.cardnumber !== creditcardMock.cardnumber
-        || JSON.parse(data).creditCard.expiry !== creditcardMock.expiry
-        || JSON.parse(data).creditCard.cvc !== creditcardMock.cvc) {
+        if (JSON.parse(data).creditCard.cardnumber !== creditCardMock.cardnumber
+        || JSON.parse(data).creditCard.expiry !== creditCardMock.expiry
+        || JSON.parse(data).creditCard.cvc !== creditCardMock.cvc) {
           res.status(401).send({ // If fail
             error: 'Invalid credit card information',
           });
@@ -80,7 +81,15 @@ module.exports = {
         res.sendStatus(401);
         return;
       }
-      res.send({ success: true }); // TODO: return payment detail for record in history
+      // If success, do payment here (assume other payment stuff happens here)
+      // Then send back the successful payment info back to the merchant
+      res.send({
+        status: 'success',
+        paymentDetail: {
+          name: decodedInfo.name,
+          price: decodedInfo.amount,
+        },
+      });
     } catch (err) {
       res.status(403).send({
         error: 'No access allowed!',

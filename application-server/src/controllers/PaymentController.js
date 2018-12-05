@@ -23,21 +23,18 @@ module.exports = {
   },
   async requestAuthorize(req, res) {
     try {
-      const { data } = (await ChargeService.post(
+      const userId = req.user.id;
+      const { paymentDetail } = (await ChargeService.post(
         req.body.AuthorizationToken,
         ppk.public,
-      ));
-      // TODO: Response to frontend and to database
-      // check weather the response is valid
+      )).data;
 
-      // if not valid Handle wrong data response from payment server
-
-      // else continue (add success data to database)
-
-      res.send(data);
+      paymentDetail.UserId = userId;
+      await PurchaseHistory.create(paymentDetail);
+      res.send({ success: true });
     } catch (err) {
       res.status(400).send({
-        error: 'Something wrong happened...',
+        error: 'Invalid Payment Authorization!',
       });
     }
   },

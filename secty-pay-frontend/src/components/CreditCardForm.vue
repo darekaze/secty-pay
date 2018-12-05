@@ -112,6 +112,7 @@ export default {
   methods: {
     async purchase() {
       try {
+        this.error = null;
         const { merchantToken } = (await PaymentService.get()).data;
         const pubKey = (await AuthorizeService.getPubKey()).data;
         const paymentInfo = {
