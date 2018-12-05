@@ -68,8 +68,8 @@ module.exports = {
           jwt.verify(data.merchantIdentity, req.body.pk, (err2, merchant) => {
             if (err2) {
               res.sendStatus(403);
-            } else {
-              console.log(merchant);
+            } else if (JSON.parse(merchant).id !== 11123 || JSON.parse(merchant).name !== 'TheMerchant') {
+              res.sendStatus(403);
             }
           });
         }
