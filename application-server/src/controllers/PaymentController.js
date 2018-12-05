@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const keypair = require('keypair');
 const ChargeService = require('../services/Charge');
+const {
+  PurchaseHistory,
+} = require('../models');
 
 const ppk = keypair();
 
@@ -35,6 +38,22 @@ module.exports = {
     } catch (err) {
       res.status(400).send({
         error: 'Something wrong happened...',
+      });
+    }
+  },
+  async getPaymentHistory(req, res) {
+    try {
+      const UserId = req.user.id;
+      const histories = await PurchaseHistory.findAll({
+        where: { UserId },
+        order: [
+          ['createdAt', 'DESC'],
+        ],
+      });
+      res.send(histories);
+    } catch (err) {
+      res.status(500).send({
+        error: 'Error in fetching purchase histories',
       });
     }
   },

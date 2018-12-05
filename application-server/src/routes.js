@@ -19,4 +19,7 @@ module.exports = (app) => {
   app.post('/payment',
     isAuthenticated,
     PaymentController.requestAuthorize);
+  app.get('/purchase-history',
+    isAuthenticated,
+    PaymentController.getPaymentHistory);
 };

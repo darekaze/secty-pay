@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Fantastic 2",
+    "price": 19900,
+    "UserId": 1
+  },
+  {
+    "name": "Amazing 10",
+    "price": 30000,
+    "UserId": 1
+  }
+]
