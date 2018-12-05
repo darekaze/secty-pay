@@ -10,6 +10,16 @@
       <v-tooltip bottom allow-overflow>
         <v-btn
           slot="activator"
+          to="/"
+          color="teal lighten-1"
+          flat icon dark>
+          <v-icon>store</v-icon>
+        </v-btn>
+        <span>Home</span>
+      </v-tooltip>
+      <v-tooltip bottom allow-overflow>
+        <v-btn
+          slot="activator"
           to="/history"
           color="teal lighten-1"
           flat icon dark>

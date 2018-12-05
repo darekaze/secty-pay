@@ -7,4 +7,7 @@ export default {
   pay(AuthorizationToken) {
     return AppApi().post('payment', { AuthorizationToken });
   },
+  history() {
+    return AppApi().get('purchase-history');
+  },
 };
