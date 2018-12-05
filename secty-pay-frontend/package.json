@@ -1,14 +1,13 @@
 {
   "name": "secty-pay",
   "version": "0.1.0",
-  "homepage": "git@github.com:darekaze/secty-pay",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit",
-    "deploy": "node ./node_modules/vue-gh-pages/index.js -b gh-pages"
+    "deploy": "node ./node_modules/vue-gh-pages/index.js -b gh-pages",
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -68,6 +67,11 @@
       "parser": "babel-eslint"
     }
   },
+  "prettier": {
+    "trailingComma": "es5",
+    "semi": true,
+    "singleQuote": true
+  },
   "postcss": {
     "plugins": {
       "autoprefixer": {}
@@ -104,6 +108,7 @@
   "gitHooks": {
     "pre-commit": "lint-staged"
   },
+  "homepage": "git@github.com:darekaze/secty-pay",
   "lint-staged": {
     "*.js": [
       "vue-cli-service lint",
@@ -113,10 +118,5 @@
       "vue-cli-service lint",
       "git add"
     ]
-  },
-  "prettier": {
-    "trailingComma": "es5",
-    "semi": true,
-    "singleQuote": true
   }
 }
