@@ -37,10 +37,16 @@ module.exports = {
       const user = await User.findOne({
         where: { username },
       });
-      if (!user) responseToFailure(res);
+      if (!user) {
+        responseToFailure(res);
+        return;
+      }
 
       const isPasswordValid = await user.comparePassword(password);
-      if (!isPasswordValid) responseToFailure(res);
+      if (!isPasswordValid) {
+        responseToFailure(res);
+        return;
+      }
 
       const userJson = user.toJSON();
       delete userJson.password; // remove password for response

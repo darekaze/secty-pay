@@ -17,7 +17,7 @@ const limiter = rateLimit({
 });
 
 //  apply to all requests
-app.use(limiter);
+// app.use(limiter); // FIXME
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(cors());
