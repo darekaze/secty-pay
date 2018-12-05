@@ -62,7 +62,8 @@
   </v-dialog>
   <v-dialog
     v-model="successDialog"
-    max-width="290">
+    max-width="290"
+    persistent>
     <v-card>
       <v-card-text>
         <v-layout column align-center justify-center>

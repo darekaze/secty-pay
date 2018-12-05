@@ -53,7 +53,7 @@ module.exports = {
       openpgp.decrypt(options).then(({ data }) => {
         // TODO: Validate credit card data with mock database
         if (JSON.parse(data).creditCard.cardnumber !== creditcardMock.cardnumber
-         || JSON.parse(data).creditCard.expiry !== creditcardMock.expiry
+        || JSON.parse(data).creditCard.expiry !== creditcardMock.expiry
         || JSON.parse(data).creditCard.cvc !== creditcardMock.cvc) {
           res.status(401).send({ // If fail
             error: 'Invalid credit card information',
