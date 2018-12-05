@@ -6,7 +6,16 @@ const config = require('../config');
 const bob = {};
 
 // Mock credit card database
-// const credit_card = {};
+const creditcardMock = {
+  cardnumber: '1111111111111111',
+  expiry: '1111',
+  cvc: '111',
+};
+
+const merchantMock = {
+  id: 11123,
+  name: 'TheMerchant',
+};
 
 function jwtSignInfo(info) {
   return jwt.sign(info, config.authentication.jwtSecret, {
@@ -43,8 +52,9 @@ module.exports = {
 
       openpgp.decrypt(options).then(({ data }) => {
         // TODO: Validate credit card data with mock database
-        if (JSON.parse(data).creditCard.cardnumber !== '1111111111111111' || JSON.parse(data).creditCard.expiry !== '1111'
-        || JSON.parse(data).creditCard.cvc !== '111') {
+        if (JSON.parse(data).creditCard.cardnumber !== creditcardMock.cardnumber
+         || JSON.parse(data).creditCard.expiry !== creditcardMock.expiry
+        || JSON.parse(data).creditCard.cvc !== creditcardMock.cvc) {
           res.status(401).send({ // If fail
             error: 'Invalid credit card information',
           });
@@ -66,7 +76,7 @@ module.exports = {
       const decodedInfo = jwt.verify(token, config.authentication.jwtSecret);
       const merchantData = jwt.verify(decodedInfo.merchantIdentity, req.body.pk);
 
-      if (merchantData.id !== 11123 || merchantData.name !== 'TheMerchant') {
+      if (merchantData.id !== merchantMock.id || merchantData.name !== merchantMock.name) {
         res.sendStatus(401);
         return;
       }
