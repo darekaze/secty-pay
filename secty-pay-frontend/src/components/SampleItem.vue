@@ -9,7 +9,7 @@
 
           <v-card-title primary-title>
             <div>
-              <div class="headline">Top Secret Video</div>
+              <div class="headline">Top Toy Tank</div>
               <span class="primary--text">HK$199.00</span>
             </div>
           </v-card-title>

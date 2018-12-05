@@ -98,6 +98,7 @@ export default {
       cardnumber: '',
       expiry: '',
       cvc: '',
+      itemName: 'Top Toy Tank',
       price: 19900,
       error: null,
       formDialog: false,
@@ -118,6 +119,7 @@ export default {
             expiry: this.expiry,
             cvc: this.cvc,
           },
+          name: this.itemName,
           amount: this.price,
           merchantIdentity: merchantToken,
         };
