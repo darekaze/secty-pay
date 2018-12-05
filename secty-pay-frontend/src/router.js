@@ -28,7 +28,7 @@ export default new Router({
     {
       path: '/history',
       name: 'history',
-      component: () => import(/* webpackChunkName: "history" */ './views/History.vue'),
+      component: () => import(/* webpackChunkName: "purchase" */ './views/History.vue'),
       beforeEnter: requireAuth,
     },
   ],
