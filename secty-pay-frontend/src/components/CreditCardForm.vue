@@ -125,10 +125,12 @@ export default {
           message: openpgp.message.fromText(JSON.stringify(paymentInfo)),
           publicKeys: (await openpgp.key.readArmored(pubKey)).keys,
         };
-
+        
         openpgp.encrypt(options).then(async (cipherText) => {
           const { AuthorizationToken } = (await AuthorizeService.getAuthorizeToken({
             message: cipherText.data,
+          }).catch((error) =>{
+            alert('Invalid credit card information');
           })).data;
 
           await PaymentService.pay(AuthorizationToken);
