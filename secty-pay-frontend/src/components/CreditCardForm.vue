@@ -125,19 +125,20 @@ export default {
           message: openpgp.message.fromText(JSON.stringify(paymentInfo)),
           publicKeys: (await openpgp.key.readArmored(pubKey)).keys,
         };
-        
-        openpgp.encrypt(options).then(async (cipherText) => {
-          const { AuthorizationToken } = (await AuthorizeService.getAuthorizeToken({
-            message: cipherText.data,
-          }).catch((error) =>{
-            alert('Invalid credit card information');
-          })).data;
 
-          await PaymentService.pay(AuthorizationToken);
-          this.successDialog = true;
+        openpgp.encrypt(options).then(async (cipherText) => {
+          try {
+            const { AuthorizationToken } = (await AuthorizeService.getAuthorizeToken({
+              message: cipherText.data,
+            })).data;
+            await PaymentService.pay(AuthorizationToken);
+            this.successDialog = true;
+          } catch (err) {
+            this.error = err.response.data.error;
+          }
         });
       } catch (error) {
-        console.log('Error has occur when communicate with the server'); // eslint-disable-line no-console
+        this.error = 'Error has occur when communicate with the server';
       }
     },
     closeAll() {
@@ -148,3 +149,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.error {
+  color: white;
+  border-radius: 4px;
+  padding-left: 4px;
+}
+</style>

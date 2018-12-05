@@ -60,27 +60,17 @@ module.exports = {
   charging(req, res) {
     try {
       const [_, token] = (req.headers.authorization).split(' ');
-      jwt.verify(token, config.authentication.jwtSecret, (err, data) => {
-        if (err) {
-          res.sendStatus(403); // forbidden
-        } else {
-          console.log(data);
-          jwt.verify(data.merchantIdentity, req.body.pk, (err2, merchant) => {
-            if (err2) {
-              res.sendStatus(403);
-            } else if (JSON.parse(merchant).id !== 11123 || JSON.parse(merchant).name !== 'TheMerchant') {
-              res.sendStatus(403);
-            }
-          });
-        }
-      });
+      const decodedInfo = jwt.verify(token, config.authentication.jwtSecret);
+      const merchantData = jwt.verify(decodedInfo.merchantIdentity, req.body.pk);
 
-      // console.log(token);
-      // console.log(req.body.pk);
-      res.send({ success: true });
+      if (merchantData.id !== 11123 || merchantData.name !== 'TheMerchant') {
+        res.sendStatus(401);
+        return;
+      }
+      res.send({ success: true }); // TODO: return payment detail for record in history
     } catch (err) {
-      res.status(400).send({
-        error: 'Sonthing went wrong to do the actual payment...',
+      res.status(403).send({
+        error: 'No access allowed!',
       });
     }
   },
