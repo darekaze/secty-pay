@@ -1,12 +1,14 @@
 {
   "name": "secty-pay",
   "version": "0.1.0",
+  "homepage": "git@github.com:darekaze/secty-pay",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "deploy": "node ./node_modules/vue-gh-pages/index.js -b gh-pages"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -39,6 +41,7 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "vue-cli-plugin-vuetify": "^0.4.6",
+    "vue-gh-pages": "^1.19.0",
     "vue-template-compiler": "^2.5.17",
     "vuetify-loader": "^1.0.5"
   },
