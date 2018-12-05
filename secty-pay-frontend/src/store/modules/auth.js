@@ -23,6 +23,7 @@ const getters = {
 
 const actions = {
   [LOGIN]({ commit }, { credential, recaptcha }) {
+    commit(SET_ERROR, null);
     return new Promise((resolve) => {
       AuthenticateService.login(credential, recaptcha)
         .then(({ data }) => {
@@ -38,6 +39,7 @@ const actions = {
     commit(PURGE_AUTH);
   },
   [REGISTER]({ commit }, { credential, recaptcha }) {
+    commit(SET_ERROR, null);
     return new Promise((resolve) => {
       AuthenticateService.register(credential, recaptcha)
         .then(({ data }) => {
