@@ -5,6 +5,9 @@ const config = require('../config');
 
 const bob = {};
 
+// Mock credit card database
+// const credit_card = {};
+
 function jwtSignInfo(info) {
   return jwt.sign(info, config.authentication.jwtSecret, {
     algorithm: 'HS512',
