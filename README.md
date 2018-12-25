@@ -2,4 +2,6 @@
 
 A secure payment model demonstrating online payment process.
 
-## WiP
+## Done
+
+Description to be added
