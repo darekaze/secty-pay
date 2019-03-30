@@ -2,6 +2,4 @@
 
 A secure payment model demonstrating online payment process.
 
-## Done
-
-Description to be added
+Finished Project.. Description to be updated...
